@@ -12,7 +12,6 @@ if __name__ == "__main__":
             sides = line.split(' ')
             tiles.append(classes.Tile(int(sides[0][1]), int(sides[1][1]), int(sides[1][1]), int(sides[1][1])))
 
-    for tile in tiles:
-        print(tile)
+    
 
     
