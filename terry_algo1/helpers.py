@@ -1,6 +1,8 @@
 import classes
 import random
 
+print("hello world")
+
 def generate_n_tiles_at_random(n: int):
     with open('input_tileset.xml', 'w') as file:
         for i in range(n):
