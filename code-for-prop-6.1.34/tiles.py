@@ -96,7 +96,6 @@ class Tilings:
         if not self.squareTilings[-1]: return # have not found any square tilings of prev size
 
         worklist = Queue()
-        seen_solns = set()
         for square in self.squareTilings[-1]:
             self.putSquareWithAddedCornerTiles(square, self.tiles, worklist)
 
@@ -106,22 +105,19 @@ class Tilings:
         while not worklist.empty():
             curr_sq = worklist.get()
             
-            # to cover trivial case
+            # to cover trivial case of forming 1 by 1 square from 0 by 0
             if curr_sq.firstMissingSide() is None:
-                if not curr_sq in seen_solns:
-                    self.squareTilings[-1].append(curr_sq)
-                    seen_solns.add(curr_sq)
+                self.squareTilings[-1].append(curr_sq)
                 continue
 
             for tile in self.tiles:
                 filled_sq = squaresWithTileInserted(curr_sq, tile)
 
-                if filled_sq is None or filled_sq in seen_solns: # ignores invalid tiling or previous solution
+                if filled_sq is None: # does not continue search on invalid tilings
                     continue
-                elif filled_sq.firstMissingSide() is None: # is a solution
+                elif filled_sq.firstMissingSide() is None: # is a solution, saves result
                     self.squareTilings[-1].append(filled_sq)
-                    seen_solns.add(filled_sq)
-                else: # incomplete tiling (work in progress)
+                else: # continues searching on incomplete valid tilings
                     worklist.put(filled_sq)
 
         # checks if solutions is not empty
