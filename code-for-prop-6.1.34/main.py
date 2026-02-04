@@ -11,16 +11,21 @@ if __name__ == "__main__":
 
     while (True):
         command = input()
-        # if command == "next":
+
         if command == "exit":
             exit(0)
+
+        if command == "dub":
+            tilings.findDoubledSquareTilings()
+            print(tilings.square_tilings[-1])
+            continue
 
         n = 1
         if command.isnumeric():
             n = int(command)
-
+        
         for i in range(n):
             tilings.findLargerByOneSquareTilings()
 
-        print(tilings.squareTilings[-1])
+        print(tilings.square_tilings[-1])
         
