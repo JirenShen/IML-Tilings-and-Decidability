@@ -9,6 +9,15 @@ class Tile:
         return f"N{self.north} E{self.east} S{self.south} W{self.west}"
 
 class Plane:
+    """
+    A plane. Mimics a square of size n in which we can insert tiles.
+
+    Attributes:
+        width: The width of the board
+        height: The height of the board
+        tile_set: The tile set used to tile the plane
+        board: Stores the information about where each tile is place on the plane
+    """
     def __init__(self, width: int, height: int, tile_set: list[Tile]):
         assert(width > 0 and height >0)
         self.width = width
@@ -27,6 +36,7 @@ class Plane:
 
     def insert(self, x: int, y: int, tile_idx: int):
         assert(self._check_within_bounds(x, y))
+        
         if self._check_is_valid_insertion(x, y, tile_idx):
             self.board[y][x] = str(tile_idx)
         else:
@@ -50,7 +60,6 @@ class Plane:
         if x + 1 < self.width and self.board[x + 1][y] != "X":
             if self.tile_set[int(self.board[x + 1][y])].east != to_place_tile.west:
                 return False
-
         return True
 
     def _check_within_bounds(self, x: int, y: int):
