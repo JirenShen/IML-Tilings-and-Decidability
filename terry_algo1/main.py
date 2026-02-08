@@ -1,27 +1,25 @@
-import classes
-import helpers
+"""
+Entry point
+"""
+
+from classes import Tile, Plane
+from helpers import read_from_tileset_file, read_from_tiling_file, find_valid_tilings_of_square, generate_n_tiles_at_random
+from pathlib import Path
+
 
 if __name__ == "__main__":
-    tiles = []
+    tile_set_path = Path(__file__).parent / 'input_tileset' / 'input_tileset.txt'
+    # tile_set_path = generate_n_tiles_at_random(10)
+    tile_set = read_from_tileset_file(tile_set_path)
 
-    # Generates n tiles at random
-    n = 5
-    file_name = helpers.generate_n_tiles_at_random(n)
-
-    with open(file_name, 'r', encoding='utf-8') as file:
-        content = file.read().split('\n')
-        for line in content:
-            sides = line.split(' ')
-            tiles.append(classes.Tile(int(sides[0][1]),
-                                      int(sides[1][1]),
-                                      int(sides[1][1]),
-                                      int(sides[1][1])))
-
-    # plane = classes.Plane(10,10,tiles)
-    # plane.insert(1,1,2)
-    # print(plane)
     
-    # helpers.find_valid_tilings_of_square(1, tiles)
+    find_valid_tilings_of_square(10, tile_set)
+    
+
+    # file_path = Path(__file__).parent / 'valid_tilings' / 'valid_tilings_of_size_1.txt'
+    # planes = read_from_tiling_file(file_path, tile_set)
+    # for plane in planes:
+    #     print(plane)
     # helpers.read_output_file('output_tiles/output_size_1.xml')
 
     
