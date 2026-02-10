@@ -9,7 +9,7 @@ from pathlib import Path
 
 if __name__ == "__main__":
     tile_set_path = Path(__file__).parent / 'input_tileset' / 'input_tileset.txt'
-    # tile_set_path = generate_n_tiles_at_random(10)
+    # tile_set_path = generate_n_tiles_at_random(11)
     tile_set = read_from_tileset_file(tile_set_path)
 
     

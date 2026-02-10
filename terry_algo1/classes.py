@@ -53,6 +53,8 @@ class Plane:
         for i in range(self.height):
             for j in range(self.width):
                 out += self.board[i][j]
+                if j != self.width - 1:
+                    out += ','
             if i != self.height - 1:
                 out += '\n'
         return out

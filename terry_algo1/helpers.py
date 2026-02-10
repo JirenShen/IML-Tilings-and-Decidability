@@ -66,15 +66,14 @@ def find_valid_tilings_of_square(size: int,
             return file_path
         else:
             file_path_minor = find_valid_tilings_of_square(size-1, tiles)
-            valid_tilings_of_minor = read_from_tiling_file(file_path_minor, tiles)
+            valid_tilings_of_minor = read_from_tiling_file(file_path_minor, tiles, size-1)
             valid_tilings = []
             valid_tilings_converted = []
             for plane in valid_tilings_of_minor:
                 enlarged_plane = Plane.from_minor_plane(plane)
                 valid_tilings += recursively_enumerate_tiles_of_the_plane(enlarged_plane, 0,0, tiles)
-                valid_tilings_converted = [Plane.from_square_board(valid_tiling, tiles) for valid_tiling in valid_tilings]
             
-            write_to_tiling_file(valid_tilings_converted, file_path)
+            print_board(valid_tilings, file_path)
             return file_path
             
     else:
@@ -123,7 +122,7 @@ def read_from_tileset_file(file_path: Path) -> list[Tile]:
         return tiles
 
 def read_from_tiling_file(file_path: Path, 
-                     tile_set: list[Tile]) -> list[Plane]:
+                     tile_set: list[Tile], size) -> list[Plane]:
     """
     Reads a file which we store all the valid tilings of a plane
 
@@ -145,7 +144,7 @@ def read_from_tiling_file(file_path: Path,
         for line in file:
             if line == '\n':
                 planes.append(convert_str_format_to_plane_object(current_plane,
-                                                                 len(current_plane[0]),
+                                                                 size,
                                                                  tile_set))
                 current_plane = []
             else:
@@ -162,9 +161,18 @@ def convert_str_format_to_plane_object(tile_str_format: list[str],
     """
     plane = Plane(size, size, tile_set)
     for index_row, line in enumerate(tile_str_format):
-        for index_col in range(size):
-            num = int(line[index_col])
-            plane.insert(index_col, index_row, int(line[index_col]))
+        current_tile = ''
+        current_x = 0
+        for char in line:
+            if char != ',':
+                current_tile += char
+            else:
+                plane.insert(current_x,index_row, int(current_tile))
+                current_x += 1
+                current_tile = ''
+        plane.insert(current_x,index_row, int(current_tile))
+        current_x = 0
+        current_tile = ''
     return plane
 
 def recursively_enumerate_tiles_of_the_plane(plane: Plane, 
@@ -184,17 +192,19 @@ def recursively_enumerate_tiles_of_the_plane(plane: Plane,
         plane.remove(x, y)
     return valid_tilings
     
-
-# def hash_file(filename, algorithm='sha256'):
-#     """
-#     Calculates the hash of a file using a specified algorithm.
-#     Returns the hexadecimal digest of the hash.
-#     """
-#     try:
-#         with open(filename, 'rb') as f:
-#             digest = hashlib.file_digest(f, algorithm)
-#         return digest.hexdigest()
-#     except FileNotFoundError:
-#         return "File not found"
-#     except ValueError as e:
-#         return f"Error: {e}"
+def print_board(valid_tilings: list[list[list[str]]], file_path: Path):
+    width = len(valid_tilings[0])
+    height = width
+    with open(file_path, 'w+', encoding='utf-8') as file:
+        for tiling in valid_tilings:
+            out = ""
+            for i in range(height):
+                for j in range(width):
+                    out += tiling[i][j]
+                    if j != width - 1:
+                        out += ','
+                out += '\n'
+                if i == height -1:
+                    out += '\n'
+            file.write(out)
+    
