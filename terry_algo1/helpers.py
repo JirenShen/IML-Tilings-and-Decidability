@@ -2,7 +2,6 @@
 Helper functions
 """
 import copy
-import pprint
 import random
 from pathlib import Path
 import os
@@ -68,11 +67,10 @@ def find_valid_tilings_of_square(size: int,
             file_path_minor = find_valid_tilings_of_square(size-1, tiles)
             valid_tilings_of_minor = read_from_tiling_file(file_path_minor, tiles, size-1)
             valid_tilings = []
-            valid_tilings_converted = []
             for plane in valid_tilings_of_minor:
                 enlarged_plane = Plane.from_minor_plane(plane)
                 valid_tilings += recursively_enumerate_tiles_of_the_plane(enlarged_plane, 0,0, tiles)
-            
+
             print_board(valid_tilings, file_path)
             return file_path
             
@@ -193,18 +191,19 @@ def recursively_enumerate_tiles_of_the_plane(plane: Plane,
     return valid_tilings
     
 def print_board(valid_tilings: list[list[list[str]]], file_path: Path):
-    width = len(valid_tilings[0])
-    height = width
-    with open(file_path, 'w+', encoding='utf-8') as file:
-        for tiling in valid_tilings:
-            out = ""
-            for i in range(height):
-                for j in range(width):
-                    out += tiling[i][j]
-                    if j != width - 1:
-                        out += ','
-                out += '\n'
-                if i == height -1:
-                    out += '\n'
-            file.write(out)
-    
+        with open(file_path, 'w+', encoding='utf-8') as file:
+            if valid_tilings:
+                width = len(valid_tilings[0])
+                height = width
+                for tiling in valid_tilings:
+                    out = ""
+                    for i in range(height):
+                        for j in range(width):
+                            out += tiling[i][j]
+                            if j != width - 1:
+                                out += ','
+                        out += '\n'
+                        if i == height -1:
+                            out += '\n'
+                    file.write(out)
+        
