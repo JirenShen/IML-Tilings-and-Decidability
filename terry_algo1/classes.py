@@ -10,7 +10,12 @@ class Tile:
     Attributes:
         north, east, south, west: sides of the tile
     """
-    def __init__(self, north: int, east: int, south: int, west: int):
+    def __init__(self,
+                 north: int,
+                 east: int,
+                 south: int,
+                 west: int):
+        
         self.north = north
         self.east = east
         self.south = south
@@ -29,7 +34,10 @@ class Plane:
         tile_set: The tile set used to tile the plane
         board: Stores the information about where each tile is place on the plane
     """
-    def __init__(self, width: int, height: int, tile_set: list[Tile]):
+    def __init__(self,
+                 width: int,
+                 height: int,
+                 tile_set: list[Tile]):
         assert(width > 0 and height >0)
         self.width = width
         self.height = height
@@ -38,7 +46,8 @@ class Plane:
         self.board = [["X" for i in range(width)] for j in range(height)]
 
     @classmethod
-    def from_minor_plane(cls, plane):
+    def from_minor_plane(cls, 
+                         plane):
         """
         Constructs a plane object of size N+1 given a smaller plane of size N. Specifically, it puts the 
         smaller plane in the lower left corner of the new plane.
@@ -70,7 +79,10 @@ class Plane:
                 out += '\n'
         return out
 
-    def insert(self, x: int, y: int, tile_idx: int):
+    def insert(self,
+               x: int,
+               y: int,
+               tile_idx: int):
         """
         Insert the tile with given index at the given location
 
@@ -87,7 +99,9 @@ class Plane:
             return True
         return False
 
-    def remove(self, x: int, y: int):
+    def remove(self,
+               x: int,
+               y: int):
         """
         Removes the tile at given location by replacing it with the symbol that indicates an empty location
         
@@ -101,7 +115,21 @@ class Plane:
         assert self._check_within_bounds(x, y)
         self.board[y][x] = 'X'
 
-    def _check_is_valid_insertion(self, x: int, y: int, tile_idx: int):
+    def _check_is_valid_insertion(self, x: int,
+                                  y: int,
+                                  tile_idx: int) -> bool:
+        """
+        Checks if the current insertion is a valid insertion
+        
+        Args:
+            x: The position in the horizontal direction
+            y: The position in the vertical direction
+            tile_idx: The index of the tile to be inserted
+
+        Returns:
+            True if the insertion was valid; false otherwise
+
+        """
         board = self.board
         width = self.width
         height = self.height
@@ -127,7 +155,9 @@ class Plane:
 
         return True
 
-    def _check_within_bounds(self, x: int, y: int) -> bool:
+    def _check_within_bounds(self,
+                             x: int,
+                             y: int) -> bool:
         """
         Checks whether the given location is whitin the bounds of the board
 

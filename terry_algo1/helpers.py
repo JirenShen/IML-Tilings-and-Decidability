@@ -7,7 +7,7 @@ from pathlib import Path
 import os
 from classes import Plane, Tile
 
-def generate_n_tiles_at_random(number_of_tiles: int):
+def generate_n_tiles_at_random(number_of_tiles: int) -> Path:
     """
     Generates n tiles at random and writes it out into a file named input_tileset.txt
 
@@ -37,8 +37,8 @@ def generate_n_tiles_at_random(number_of_tiles: int):
 
     return file_path
 
-def find_valid_tilings_of_square(size: int, 
-                                 tiles: list[Tile]):
+def find_valid_tilings_of_square(size: int,
+                                 tiles: list[Tile]) -> Path:
     """
     Finds the valid tilings of size n given a tile set.
 
@@ -88,7 +88,8 @@ def find_valid_tilings_of_square(size: int,
         write_to_tiling_file(planes, file_path)
         return file_path
 
-def write_to_tiling_file(planes: list[Plane], file_path: Path ):
+def write_to_tiling_file(planes: list[Plane],
+                         file_path: Path):
     """
     Writes the tilings inputted as a parameter into the file specified by the file_path
 
@@ -122,8 +123,9 @@ def read_from_tileset_file(file_path: Path) -> list[Tile]:
                                     int(sides[3][1])))
         return tiles
 
-def read_from_tiling_file(file_path: Path, 
-                     tile_set: list[Tile], size) -> list[Plane]:
+def read_from_tiling_file(file_path: Path,
+                          tile_set: list[Tile],
+                          size: int) -> list[Plane]:
     """
     Reads a file which we store all the valid tilings of a plane
 
@@ -154,7 +156,7 @@ def read_from_tiling_file(file_path: Path,
 
 def convert_str_format_to_plane_object(plane_str_format: list[str],
                                        size: int,
-                                       tile_set: list[Tile]):
+                                       tile_set: list[Tile]) -> Plane:
     """
     Converts a txt file storing the valid tilings into a list of plane (tilings) objects
 
@@ -181,9 +183,9 @@ def convert_str_format_to_plane_object(plane_str_format: list[str],
     return plane
 
 def recursively_enumerate_tilings_of_the_plane(plane: Plane,
-                                             x: int,
-                                             y: int,
-                                             tile_set: list[Tile]) -> list[list[list[str]]]:
+                                              x: int,
+                                              y: int,
+                                              tile_set: list[Tile]) -> list[list[list[str]]]:
     """
     Recursively enumerates the tilings of the plane
 
@@ -209,7 +211,8 @@ def recursively_enumerate_tilings_of_the_plane(plane: Plane,
         plane.remove(x, y)
     return valid_tilings
 
-def print_board_into_file(tilings: list[list[list[str]]], file_path: Path):
+def print_board_into_file(tilings: list[list[list[str]]], 
+                          file_path: Path):
     """
     Prints a given list of tilings into a file specified by the file path
 
