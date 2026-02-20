@@ -34,7 +34,7 @@ def generate_n_tiles_at_random(number_of_tiles: int):
 
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(out)
-    
+
     return file_path
 
 def find_valid_tilings_of_square(size: int, 
@@ -66,14 +66,17 @@ def find_valid_tilings_of_square(size: int,
         else:
             file_path_minor = find_valid_tilings_of_square(size-1, tiles)
             valid_tilings_of_minor = read_from_tiling_file(file_path_minor, tiles, size-1)
-            valid_tilings = []
+            current_valid_tilings = []
             for plane in valid_tilings_of_minor:
                 enlarged_plane = Plane.from_minor_plane(plane)
-                valid_tilings += recursively_enumerate_tiles_of_the_plane(enlarged_plane, 0,0, tiles)
-
-            print_board(valid_tilings, file_path)
+                current_valid_tilings += recursively_enumerate_tilings_of_the_plane(enlarged_plane,
+                                                                                  0,
+                                                                                  0,
+                                                                                  tiles)
+        
+            print_board_into_file(current_valid_tilings, file_path)
             return file_path
-            
+        
     else:
         file_path = Path(__file__).parent / 'valid_tilings' / f'valid_tilings_of_size_{size}.txt'
         planes = []
@@ -149,16 +152,20 @@ def read_from_tiling_file(file_path: Path,
                 current_plane.append(line.strip())
         return planes
 
-def convert_str_format_to_plane_object(tile_str_format: list[str],
+def convert_str_format_to_plane_object(plane_str_format: list[str],
                                        size: int,
                                        tile_set: list[Tile]):
     """
-
     Converts a txt file storing the valid tilings into a list of plane (tilings) objects
+
+    Args:
+        plane_str_format: A plane as a list of characters layed out in a single dimension
+        size: The size of the plane
+        tile_set: The tile set in use
 
     """
     plane = Plane(size, size, tile_set)
-    for index_row, line in enumerate(tile_str_format):
+    for index_row, line in enumerate(plane_str_format):
         current_tile = ''
         current_x = 0
         for char in line:
@@ -173,37 +180,60 @@ def convert_str_format_to_plane_object(tile_str_format: list[str],
         current_tile = ''
     return plane
 
-def recursively_enumerate_tiles_of_the_plane(plane: Plane, 
-                                             x: int, y: int, 
-                                             tile_set: list[Tile]) -> list[list[str]]:
+def recursively_enumerate_tilings_of_the_plane(plane: Plane,
+                                             x: int,
+                                             y: int,
+                                             tile_set: list[Tile]) -> list[list[list[str]]]:
+    """
+    Recursively enumerates the tilings of the plane
+
+    Args:
+        x: the horizontal position where we want to insert to in the current instance
+        y: the vertical position where we want to insert to in the current instance
+
+    Returns:
+        A list of tilings of the plane
+
+    """
     valid_tilings = []
     for tile_idx in range(len(tile_set)):
         if not plane.insert(x, y, tile_idx):
             continue
         if x+1 < plane.width:
-            valid_tilings += recursively_enumerate_tiles_of_the_plane(plane, x+1, y, tile_set)
+            valid_tilings += recursively_enumerate_tilings_of_the_plane(plane, x+1, y, tile_set)
         elif y+1 < plane.height:
-            valid_tilings += recursively_enumerate_tiles_of_the_plane(plane, x, y+1, tile_set)
+            valid_tilings += recursively_enumerate_tilings_of_the_plane(plane, x, y+1, tile_set)
 
         if  x+y+1 == plane.width + plane.height - 1:
             valid_tilings.append(copy.deepcopy(plane.board))
         plane.remove(x, y)
     return valid_tilings
+
+def print_board_into_file(tilings: list[list[list[str]]], file_path: Path):
+    """
+    Prints a given list of tilings into a file specified by the file path
+
+    Args:
+        tilings: A given list of tilings
+        file_path: The path of the file
+
+    Returns:
+        None
     
-def print_board(valid_tilings: list[list[list[str]]], file_path: Path):
-        with open(file_path, 'w+', encoding='utf-8') as file:
-            if valid_tilings:
-                width = len(valid_tilings[0])
-                height = width
-                for tiling in valid_tilings:
-                    out = ""
-                    for i in range(height):
-                        for j in range(width):
-                            out += tiling[i][j]
-                            if j != width - 1:
-                                out += ','
+    """
+    with open(file_path, 'w+', encoding='utf-8') as file:
+        if tilings:
+            width = len(tilings[0])
+            height = width
+            for tiling in tilings:
+                out = ""
+                for i in range(height):
+                    for j in range(width):
+                        out += tiling[i][j]
+                        if j != width - 1:
+                            out += ','
+                    out += '\n'
+                    if i == height -1:
                         out += '\n'
-                        if i == height -1:
-                            out += '\n'
-                    file.write(out)
+                file.write(out)
         
